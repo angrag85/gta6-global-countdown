@@ -2,211 +2,313 @@
 "use strict";
 
 // ============================================
-// GTA 6 GLOBAL COUNTDOWN
+// GTA 6 COUNTDOWN
+// MANUAL COUNTRY + FLAG + TIMEZONE DATABASE
 // ============================================
 
 const LAUNCH_DATE = new Date("2026-11-19T00:00:00");
 
+// Each entry: [timezone, country name, flag]
+const COUNTRIES = [
+  ["Asia/Kolkata", "India", "🇮🇳"],
+  ["Asia/Dubai", "United Arab Emirates", "🇦🇪"],
+  ["Asia/Riyadh", "Saudi Arabia", "🇸🇦"],
+  ["Asia/Tokyo", "Japan", "🇯🇵"],
+  ["Asia/Shanghai", "China", "🇨🇳"],
+  ["Asia/Hong_Kong", "Hong Kong", "🇭🇰"],
+  ["Asia/Singapore", "Singapore", "🇸🇬"],
+  ["Asia/Dhaka", "Bangladesh", "🇧🇩"],
+  ["Asia/Kathmandu", "Nepal", "🇳🇵"],
+  ["Asia/Colombo", "Sri Lanka", "🇱🇰"],
+  ["Asia/Karachi", "Pakistan", "🇵🇰"],
+  ["Asia/Kabul", "Afghanistan", "🇦🇫"],
+  ["Asia/Tehran", "Iran", "🇮🇷"],
+  ["Asia/Baghdad", "Iraq", "🇮🇶"],
+  ["Asia/Jerusalem", "Israel", "🇮🇱"],
+  ["Asia/Seoul", "South Korea", "🇰🇷"],
+  ["Asia/Pyongyang", "North Korea", "🇰🇵"],
+  ["Asia/Bangkok", "Thailand", "🇹🇭"],
+  ["Asia/Jakarta", "Indonesia", "🇮🇩"],
+  ["Asia/Makassar", "Indonesia", "🇮🇩"],
+  ["Asia/Jayapura", "Indonesia", "🇮🇩"],
+  ["Asia/Manila", "Philippines", "🇵🇭"],
+  ["Asia/Kuala_Lumpur", "Malaysia", "🇲🇾"],
+  ["Asia/Taipei", "Taiwan", "🇹🇼"],
+  ["Asia/Yangon", "Myanmar", "🇲🇲"],
+  ["Asia/Ho_Chi_Minh", "Vietnam", "🇻🇳"],
+  ["Asia/Phnom_Penh", "Cambodia", "🇰🇭"],
+  ["Asia/Vientiane", "Laos", "🇱🇦"],
+  ["Asia/Ulaanbaatar", "Mongolia", "🇲🇳"],
+  ["Asia/Tashkent", "Uzbekistan", "🇺🇿"],
+  ["Asia/Almaty", "Kazakhstan", "🇰🇿"],
+  ["Asia/Bishkek", "Kyrgyzstan", "🇰🇬"],
+  ["Asia/Dushanbe", "Tajikistan", "🇹🇯"],
+  ["Asia/Ashgabat", "Turkmenistan", "🇹🇲"],
+  ["Asia/Yerevan", "Armenia", "🇦🇲"],
+  ["Asia/Baku", "Azerbaijan", "🇦🇿"],
+  ["Asia/Tbilisi", "Georgia", "🇬🇪"],
+  ["Asia/Amman", "Jordan", "🇯🇴"],
+  ["Asia/Beirut", "Lebanon", "🇱🇧"],
+  ["Asia/Damascus", "Syria", "🇸🇾"],
+  ["Asia/Muscat", "Oman", "🇴🇲"],
+  ["Asia/Qatar", "Qatar", "🇶🇦"],
+  ["Asia/Kuwait", "Kuwait", "🇰🇼"],
+  ["Asia/Bahrain", "Bahrain", "🇧🇭"],
+  ["Asia/Aden", "Yemen", "🇾🇪"],
+  ["Asia/Gaza", "Palestine", "🇵🇸"],
+
+  // EUROPE
+  ["Europe/London", "United Kingdom", "🇬🇧"],
+  ["Europe/Dublin", "Ireland", "🇮🇪"],
+  ["Europe/Paris", "France", "🇫🇷"],
+  ["Europe/Berlin", "Germany", "🇩🇪"],
+  ["Europe/Rome", "Italy", "🇮🇹"],
+  ["Europe/Madrid", "Spain", "🇪🇸"],
+  ["Europe/Amsterdam", "Netherlands", "🇳🇱"],
+  ["Europe/Brussels", "Belgium", "🇧🇪"],
+  ["Europe/Zurich", "Switzerland", "🇨🇭"],
+  ["Europe/Vienna", "Austria", "🇦🇹"],
+  ["Europe/Prague", "Czechia", "🇨🇿"],
+  ["Europe/Warsaw", "Poland", "🇵🇱"],
+  ["Europe/Stockholm", "Sweden", "🇸🇪"],
+  ["Europe/Oslo", "Norway", "🇳🇴"],
+  ["Europe/Copenhagen", "Denmark", "🇩🇰"],
+  ["Europe/Helsinki", "Finland", "🇫🇮"],
+  ["Europe/Athens", "Greece", "🇬🇷"],
+  ["Europe/Lisbon", "Portugal", "🇵🇹"],
+  ["Europe/Moscow", "Russia", "🇷🇺"],
+  ["Europe/Kyiv", "Ukraine", "🇺🇦"],
+  ["Europe/Bucharest", "Romania", "🇷🇴"],
+  ["Europe/Budapest", "Hungary", "🇭🇺"],
+  ["Europe/Sofia", "Bulgaria", "🇧🇬"],
+  ["Europe/Belgrade", "Serbia", "🇷🇸"],
+  ["Europe/Zagreb", "Croatia", "🇭🇷"],
+  ["Europe/Sarajevo", "Bosnia and Herzegovina", "🇧🇦"],
+  ["Europe/Skopje", "North Macedonia", "🇲🇰"],
+  ["Europe/Tirane", "Albania", "🇦🇱"],
+  ["Europe/Podgorica", "Montenegro", "🇲🇪"],
+  ["Europe/Vilnius", "Lithuania", "🇱🇹"],
+  ["Europe/Riga", "Latvia", "🇱🇻"],
+  ["Europe/Tallinn", "Estonia", "🇪🇪"],
+  ["Europe/Minsk", "Belarus", "🇧🇾"],
+  ["Europe/Reykjavik", "Iceland", "🇮🇸"],
+  ["Europe/Luxembourg", "Luxembourg", "🇱🇺"],
+  ["Europe/Monaco", "Monaco", "🇲🇨"],
+  ["Europe/Malta", "Malta", "🇲🇹"],
+  ["Europe/Andorra", "Andorra", "🇦🇩"],
+  ["Europe/San_Marino", "San Marino", "🇸🇲"],
+  ["Europe/Vatican", "Vatican City", "🇻🇦"],
+  ["Europe/Istanbul", "Turkey", "🇹🇷"],
+  ["Europe/Chisinau", "Moldova", "🇲🇩"],
+  ["Europe/Skopje", "North Macedonia", "🇲🇰"],
+
+  // NORTH AMERICA
+  ["America/New_York", "United States", "🇺🇸"],
+  ["America/Detroit", "United States", "🇺🇸"],
+  ["America/Chicago", "United States", "🇺🇸"],
+  ["America/Denver", "United States", "🇺🇸"],
+  ["America/Los_Angeles", "United States", "🇺🇸"],
+  ["America/Phoenix", "United States", "🇺🇸"],
+  ["America/Anchorage", "United States", "🇺🇸"],
+  ["Pacific/Honolulu", "United States", "🇺🇸"],
+  ["America/Toronto", "Canada", "🇨🇦"],
+  ["America/Vancouver", "Canada", "🇨🇦"],
+  ["America/Edmonton", "Canada", "🇨🇦"],
+  ["America/Winnipeg", "Canada", "🇨🇦"],
+  ["America/Halifax", "Canada", "🇨🇦"],
+  ["America/St_Johns", "Canada", "🇨🇦"],
+  ["America/Mexico_City", "Mexico", "🇲🇽"],
+  ["America/Cancun", "Mexico", "🇲🇽"],
+  ["America/Tijuana", "Mexico", "🇲🇽"],
+  ["America/Guatemala", "Guatemala", "🇬🇹"],
+  ["America/Belize", "Belize", "🇧🇿"],
+  ["America/Tegucigalpa", "Honduras", "🇭🇳"],
+  ["America/Managua", "Nicaragua", "🇳🇮"],
+  ["America/Costa_Rica", "Costa Rica", "🇨🇷"],
+  ["America/Panama", "Panama", "🇵🇦"],
+  ["America/Havana", "Cuba", "🇨🇺"],
+  ["America/Jamaica", "Jamaica", "🇯🇲"],
+  ["America/Santo_Domingo", "Dominican Republic", "🇩🇴"],
+  ["America/Port-au-Prince", "Haiti", "🇭🇹"],
+  ["America/Puerto_Rico", "Puerto Rico", "🇵🇷"],
+  ["America/El_Salvador", "El Salvador", "🇸🇻"],
+
+  // SOUTH AMERICA
+  ["America/Sao_Paulo", "Brazil", "🇧🇷"],
+  ["America/Manaus", "Brazil", "🇧🇷"],
+  ["America/Rio_Branco", "Brazil", "🇧🇷"],
+  ["America/Argentina/Buenos_Aires", "Argentina", "🇦🇷"],
+  ["America/Argentina/Cordoba", "Argentina", "🇦🇷"],
+  ["America/Santiago", "Chile", "🇨🇱"],
+  ["America/Bogota", "Colombia", "🇨🇴"],
+  ["America/Lima", "Peru", "🇵🇪"],
+  ["America/Caracas", "Venezuela", "🇻🇪"],
+  ["America/Guayaquil", "Ecuador", "🇪🇨"],
+  ["America/La_Paz", "Bolivia", "🇧🇴"],
+  ["America/Asuncion", "Paraguay", "🇵🇾"],
+  ["America/Montevideo", "Uruguay", "🇺🇾"],
+  ["America/Paramaribo", "Suriname", "🇸🇷"],
+  ["America/Guyana", "Guyana", "🇬🇾"],
+
+  // AFRICA
+  ["Africa/Cairo", "Egypt", "🇪🇬"],
+  ["Africa/Johannesburg", "South Africa", "🇿🇦"],
+  ["Africa/Lagos", "Nigeria", "🇳🇬"],
+  ["Africa/Nairobi", "Kenya", "🇰🇪"],
+  ["Africa/Casablanca", "Morocco", "🇲🇦"],
+  ["Africa/Algiers", "Algeria", "🇩🇿"],
+  ["Africa/Tunis", "Tunisia", "🇹🇳"],
+  ["Africa/Tripoli", "Libya", "🇱🇾"],
+  ["Africa/Khartoum", "Sudan", "🇸🇩"],
+  ["Africa/Addis_Ababa", "Ethiopia", "🇪🇹"],
+  ["Africa/Dar_es_Salaam", "Tanzania", "🇹🇿"],
+  ["Africa/Kampala", "Uganda", "🇺🇬"],
+  ["Africa/Kigali", "Rwanda", "🇷🇼"],
+  ["Africa/Accra", "Ghana", "🇬🇭"],
+  ["Africa/Abidjan", "Ivory Coast", "🇨🇮"],
+  ["Africa/Dakar", "Senegal", "🇸🇳"],
+  ["Africa/Maputo", "Mozambique", "🇲🇿"],
+  ["Africa/Harare", "Zimbabwe", "🇿🇼"],
+  ["Africa/Lusaka", "Zambia", "🇿🇲"],
+  ["Africa/Gaborone", "Botswana", "🇧🇼"],
+  ["Africa/Windhoek", "Namibia", "🇳🇦"],
+  ["Africa/Luanda", "Angola", "🇦🇴"],
+  ["Africa/Monrovia", "Liberia", "🇱🇷"],
+  ["Africa/Freetown", "Sierra Leone", "🇸🇱"],
+  ["Africa/Bamako", "Mali", "🇲🇱"],
+  ["Africa/Niamey", "Niger", "🇳🇪"],
+  ["Africa/Ndjamena", "Chad", "🇹🇩"],
+  ["Africa/Douala", "Cameroon", "🇨🇲"],
+  ["Africa/Libreville", "Gabon", "🇬🇦"],
+  ["Africa/Brazzaville", "Republic of the Congo", "🇨🇬"],
+  ["Africa/Kinshasa", "Democratic Republic of the Congo", "🇨🇩"],
+  ["Africa/Antananarivo", "Madagascar", "🇲🇬"],
+  ["Africa/Mogadishu", "Somalia", "🇸🇴"],
+  ["Africa/Djibouti", "Djibouti", "🇩🇯"],
+  ["Africa/Asmara", "Eritrea", "🇪🇷"],
+  ["Africa/Bujumbura", "Burundi", "🇧🇮"],
+  ["Africa/Porto-Novo", "Benin", "🇧🇯"],
+  ["Africa/Lome", "Togo", "🇹🇬"],
+  ["Africa/Ouagadougou", "Burkina Faso", "🇧🇫"],
+  ["Africa/Bangui", "Central African Republic", "🇨🇫"],
+  ["Africa/Malabo", "Equatorial Guinea", "🇬🇶"],
+  ["Africa/Sao_Tome", "Sao Tome and Principe", "🇸🇹"],
+  ["Africa/Blantyre", "Malawi", "🇲🇼"],
+  ["Africa/Maseru", "Lesotho", "🇱🇸"],
+  ["Africa/Mbabane", "Eswatini", "🇸🇿"],
+  ["Africa/Banjul", "Gambia", "🇬🇲"],
+  ["Africa/Conakry", "Guinea", "🇬🇳"],
+  ["Africa/Guinea-Bissau", "Guinea-Bissau", "🇬🇼"],
+  ["Africa/Nouakchott", "Mauritania", "🇲🇷"],
+  ["Africa/El_Aaiun", "Western Sahara", "🇪🇭"],
+
+  // OCEANIA
+  ["Australia/Sydney", "Australia", "🇦🇺"],
+  ["Australia/Melbourne", "Australia", "🇦🇺"],
+  ["Australia/Brisbane", "Australia", "🇦🇺"],
+  ["Australia/Perth", "Australia", "🇦🇺"],
+  ["Australia/Adelaide", "Australia", "🇦🇺"],
+  ["Australia/Darwin", "Australia", "🇦🇺"],
+  ["Australia/Hobart", "Australia", "🇦🇺"],
+  ["Pacific/Auckland", "New Zealand", "🇳🇿"],
+  ["Pacific/Fiji", "Fiji", "🇫🇯"],
+  ["Pacific/Port_Moresby", "Papua New Guinea", "🇵🇬"],
+  ["Pacific/Guadalcanal", "Solomon Islands", "🇸🇧"],
+  ["Pacific/Noumea", "New Caledonia", "🇳🇨"],
+  ["Pacific/Apia", "Samoa", "🇼🇸"],
+  ["Pacific/Tongatapu", "Tonga", "🇹🇴"],
+  ["Pacific/Tarawa", "Kiribati", "🇰🇮"],
+  ["Pacific/Majuro", "Marshall Islands", "🇲🇭"],
+  ["Pacific/Palau", "Palau", "🇵🇼"],
+  ["Pacific/Chuuk", "Micronesia", "🇫🇲"],
+  ["Pacific/Nauru", "Nauru", "🇳🇷"],
+  ["Pacific/Funafuti", "Tuvalu", "🇹🇻"],
+  ["Pacific/Efate", "Vanuatu", "🇻🇺"],
+  ["Pacific/Pago_Pago", "American Samoa", "🇦🇸"],
+  ["Pacific/Rarotonga", "Cook Islands", "🇨🇰"],
+  ["Pacific/Niue", "Niue", "🇳🇺"]
+];
+
 // ============================================
-// COUNTRY NAME AND FLAG HELPERS
+// DETECT COUNTRY FROM PHONE TIMEZONE
 // ============================================
 
-function countryFlag(code) {
-  return code
-    .toUpperCase()
-    .split("")
-    .map(letter =>
-      String.fromCodePoint(127397 + letter.charCodeAt(0))
-    )
-    .join("");
-}
-
-function countryName(code) {
-  const names = new Intl.DisplayNames(["en"], {
-    type: "region"
-  });
-
-  return names.of(code) || code;
-}
-
-// ============================================
-// LOAD WORLDWIDE TIMEZONE DATABASE
-// ============================================
-
-async function loadTimezoneCountries() {
-  const sources = [
-    "https://raw.githubusercontent.com/eggert/tz/main/zone.tab",
-    "https://raw.githubusercontent.com/eggert/tz/main/zone1970.tab"
-  ];
-
-  for (const source of sources) {
-    try {
-      const response = await fetch(source, {
-        cache: "no-store"
-      });
-
-      if (!response.ok) continue;
-
-      const text = await response.text();
-      const mapping = {};
-
-      text.split(/\r?\n/).forEach(line => {
-        if (!line || line.startsWith("#")) return;
-
-        const columns = line.split("\t");
-
-        if (columns.length < 3) return;
-
-        const countryCodes = columns[0].split(",");
-        const timezone = columns[2];
-
-        if (!mapping[timezone] && countryCodes[0]) {
-          mapping[timezone] = countryCodes[0].toUpperCase();
-        }
-      });
-
-      if (Object.keys(mapping).length > 0) {
-        return mapping;
-      }
-    } catch (error) {
-      console.warn("Timezone database source failed:", source);
-    }
-  }
-
-  throw new Error("Could not load timezone database");
-}
-
-// ============================================
-// DETECT SELECTED TIMEZONE AND COUNTRY
-// ============================================
-
-async function detectCountry() {
-  const countryElement = document.getElementById("country");
-
-  if (!countryElement) {
-    console.error('Missing element: id="country"');
-    return;
-  }
-
-  countryElement.textContent = "🌍 Detecting country...";
-
+function detectCountry() {
   const timezone =
     Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  try {
-    const timezoneCountries = await loadTimezoneCountries();
+  const countryElement =
+    document.getElementById("country");
 
-    let code = timezoneCountries[timezone];
-
-    // Handle common timezone aliases
-    const aliases = {
-      "Asia/Calcutta": "Asia/Kolkata",
-      "Europe/Kiev": "Europe/Kyiv",
-      "America/Godthab": "America/Nuuk"
-    };
-
-    if (!code && aliases[timezone]) {
-      code = timezoneCountries[aliases[timezone]];
-    }
-
-    if (!code) {
-      countryElement.textContent =
-        "🌍 Country not identified";
-      console.warn("Timezone not found:", timezone);
-      return;
-    }
-
-    const flag = countryFlag(code);
-    const name = countryName(code);
-
-    countryElement.textContent = `${flag} ${name}`;
-
-    console.log("Detected timezone:", timezone);
-    console.log("Detected country:", name);
-    console.log("Detected country code:", code);
-
-  } catch (error) {
-    console.error("Country detection error:", error);
-
-    countryElement.textContent =
-      "🌍 Country unavailable";
-  }
-}
-
-// ============================================
-// DISPLAY TIMEZONE
-// ============================================
-
-function detectTimezone() {
   const timezoneElement =
     document.getElementById("timezone");
 
-  const timezone =
-    Intl.DateTimeFormat().resolvedOptions().timeZone;
-
   if (timezoneElement) {
-    timezoneElement.textContent =
-      timezone || "Unknown timezone";
+    timezoneElement.textContent = timezone;
   }
+
+  if (!countryElement) return;
+
+  // Find matching manually entered country
+  const match = COUNTRIES.find(
+    country => country[0] === timezone
+  );
+
+  if (match) {
+    countryElement.textContent =
+      `${match[2]} ${match[1]}`;
+  } else {
+    countryElement.textContent =
+      "🌍 Other Region";
+  }
+
+  console.log("Selected timezone:", timezone);
+  console.log("Country result:", match || "No match");
 }
 
 // ============================================
-// COUNTDOWN TIMER
+// COUNTDOWN
 // ============================================
 
 function updateCountdown() {
   const now = new Date();
+  const difference = LAUNCH_DATE - now;
 
-  const difference =
-    LAUNCH_DATE.getTime() - now.getTime();
-
-  const daysElement = document.getElementById("days");
-  const hoursElement = document.getElementById("hours");
-  const minutesElement = document.getElementById("minutes");
-  const secondsElement = document.getElementById("seconds");
+  const days = document.getElementById("days");
+  const hours = document.getElementById("hours");
+  const minutes = document.getElementById("minutes");
+  const seconds = document.getElementById("seconds");
 
   if (difference <= 0) {
-    if (daysElement) daysElement.textContent = "00";
-    if (hoursElement) hoursElement.textContent = "00";
-    if (minutesElement) minutesElement.textContent = "00";
-    if (secondsElement) secondsElement.textContent = "00";
+    if (days) days.textContent = "00";
+    if (hours) hours.textContent = "00";
+    if (minutes) minutes.textContent = "00";
+    if (seconds) seconds.textContent = "00";
     return;
   }
 
-  const days = Math.floor(
-    difference / (1000 * 60 * 60 * 24)
-  );
-
-  const hours = Math.floor(
-    (difference / (1000 * 60 * 60)) % 24
-  );
-
-  const minutes = Math.floor(
-    (difference / (1000 * 60)) % 60
-  );
-
-  const seconds = Math.floor(
-    (difference / 1000) % 60
-  );
-
-  if (daysElement) {
-    daysElement.textContent =
-      String(days).padStart(2, "0");
+  if (days) {
+    days.textContent = String(
+      Math.floor(difference / 86400000)
+    ).padStart(2, "0");
   }
 
-  if (hoursElement) {
-    hoursElement.textContent =
-      String(hours).padStart(2, "0");
+  if (hours) {
+    hours.textContent = String(
+      Math.floor((difference % 86400000) / 3600000)
+    ).padStart(2, "0");
   }
 
-  if (minutesElement) {
-    minutesElement.textContent =
-      String(minutes).padStart(2, "0");
+  if (minutes) {
+    minutes.textContent = String(
+      Math.floor((difference % 3600000) / 60000)
+    ).padStart(2, "0");
   }
 
-  if (secondsElement) {
-    secondsElement.textContent =
-      String(seconds).padStart(2, "0");
+  if (seconds) {
+    seconds.textContent = String(
+      Math.floor((difference % 60000) / 1000)
+    ).padStart(2, "0");
   }
 }
 
@@ -216,8 +318,6 @@ function updateCountdown() {
 
 document.addEventListener("DOMContentLoaded", () => {
   detectCountry();
-  detectTimezone();
-
   updateCountdown();
 
   setInterval(updateCountdown, 1000);
