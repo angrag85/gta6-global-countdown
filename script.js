@@ -1,118 +1,164 @@
 
-document.addEventListener("DOMContentLoaded", () => {
-  detectCountry();
-  detectTimezone();
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-});
+"use strict";
 
-// ==================================
-// COUNTRY NAME + FLAG
-// ==================================
+// ============================================
+// GTA 6 GLOBAL COUNTDOWN
+// ============================================
+
+const LAUNCH_DATE = new Date("2026-11-19T00:00:00");
+
+// ============================================
+// COUNTRY NAME AND FLAG HELPERS
+// ============================================
+
+function countryFlag(code) {
+  return code
+    .toUpperCase()
+    .split("")
+    .map(letter =>
+      String.fromCodePoint(127397 + letter.charCodeAt(0))
+    )
+    .join("");
+}
+
+function countryName(code) {
+  const names = new Intl.DisplayNames(["en"], {
+    type: "region"
+  });
+
+  return names.of(code) || code;
+}
+
+// ============================================
+// LOAD WORLDWIDE TIMEZONE DATABASE
+// ============================================
+
+async function loadTimezoneCountries() {
+  const sources = [
+    "https://raw.githubusercontent.com/eggert/tz/main/zone.tab",
+    "https://raw.githubusercontent.com/eggert/tz/main/zone1970.tab"
+  ];
+
+  for (const source of sources) {
+    try {
+      const response = await fetch(source, {
+        cache: "no-store"
+      });
+
+      if (!response.ok) continue;
+
+      const text = await response.text();
+      const mapping = {};
+
+      text.split(/\r?\n/).forEach(line => {
+        if (!line || line.startsWith("#")) return;
+
+        const columns = line.split("\t");
+
+        if (columns.length < 3) return;
+
+        const countryCodes = columns[0].split(",");
+        const timezone = columns[2];
+
+        if (!mapping[timezone] && countryCodes[0]) {
+          mapping[timezone] = countryCodes[0].toUpperCase();
+        }
+      });
+
+      if (Object.keys(mapping).length > 0) {
+        return mapping;
+      }
+    } catch (error) {
+      console.warn("Timezone database source failed:", source);
+    }
+  }
+
+  throw new Error("Could not load timezone database");
+}
+
+// ============================================
+// DETECT SELECTED TIMEZONE AND COUNTRY
+// ============================================
 
 async function detectCountry() {
   const countryElement = document.getElementById("country");
 
   if (!countryElement) {
-    console.error('Missing HTML element: id="country"');
+    console.error('Missing element: id="country"');
     return;
   }
 
   countryElement.textContent = "🌍 Detecting country...";
 
+  const timezone =
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   try {
-    let countryName = "";
-    let countryCode = "";
+    const timezoneCountries = await loadTimezoneCountries();
 
-    // First country detection service
-    try {
-      const response = await fetch("https://ipwho.is/", {
-        cache: "no-store"
-      });
+    let code = timezoneCountries[timezone];
 
-      if (!response.ok) throw new Error("First service failed");
+    // Handle common timezone aliases
+    const aliases = {
+      "Asia/Calcutta": "Asia/Kolkata",
+      "Europe/Kiev": "Europe/Kyiv",
+      "America/Godthab": "America/Nuuk"
+    };
 
-      const data = await response.json();
-
-      if (data.success && data.country_code && data.country) {
-        countryName = data.country;
-        countryCode = data.country_code;
-      } else {
-        throw new Error("No country returned");
-      }
-    } catch (error) {
-      console.warn("Trying backup country service...");
+    if (!code && aliases[timezone]) {
+      code = timezoneCountries[aliases[timezone]];
     }
 
-    // Backup country detection service
-    if (!countryCode) {
-      const response = await fetch("https://ipapi.co/json/", {
-        cache: "no-store"
-      });
-
-      if (!response.ok) throw new Error("Backup service failed");
-
-      const data = await response.json();
-
-      countryName = data.country_name;
-      countryCode = data.country_code;
-    }
-
-    if (!countryName || !countryCode) {
-      throw new Error("Country information unavailable");
-    }
-
-    countryCode = countryCode.toUpperCase();
-
-    // Exclude Pakistan
-    if (countryCode === "PK") {
-      countryElement.textContent = "🌍 Other Region";
+    if (!code) {
+      countryElement.textContent =
+        "🌍 Country not identified";
+      console.warn("Timezone not found:", timezone);
       return;
     }
 
-    // Create country flag emoji
-    const flag = countryCode
-      .split("")
-      .map(letter =>
-        String.fromCodePoint(127397 + letter.charCodeAt(0))
-      )
-      .join("");
+    const flag = countryFlag(code);
+    const name = countryName(code);
 
-    // Display flag and country name together
-    countryElement.textContent = `${flag} ${countryName}`;
+    countryElement.textContent = `${flag} ${name}`;
 
-    console.log("Country detected:", countryName, countryCode);
+    console.log("Detected timezone:", timezone);
+    console.log("Detected country:", name);
+    console.log("Detected country code:", code);
 
   } catch (error) {
-    console.error("Country detection failed:", error);
-    countryElement.textContent = "🌍 Country unavailable";
+    console.error("Country detection error:", error);
+
+    countryElement.textContent =
+      "🌍 Country unavailable";
   }
 }
 
-// ==================================
-// TIMEZONE
-// ==================================
+// ============================================
+// DISPLAY TIMEZONE
+// ============================================
 
 function detectTimezone() {
-  const timezoneElement = document.getElementById("timezone");
-
-  if (!timezoneElement) return;
+  const timezoneElement =
+    document.getElementById("timezone");
 
   const timezone =
     Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  timezoneElement.textContent = timezone || "Unknown";
+  if (timezoneElement) {
+    timezoneElement.textContent =
+      timezone || "Unknown timezone";
+  }
 }
 
-// ==================================
-// GTA 6 COUNTDOWN
-// ==================================
-
-const LAUNCH_DATE = new Date("2026-11-19T00:00:00");
+// ============================================
+// COUNTDOWN TIMER
+// ============================================
 
 function updateCountdown() {
   const now = new Date();
-  const difference = LAUNCH_DATE.getTime() - now.getTime();
+
+  const difference =
+    LAUNCH_DATE.getTime() - now.getTime();
 
   const daysElement = document.getElementById("days");
   const hoursElement = document.getElementById("hours");
@@ -127,13 +173,52 @@ function updateCountdown() {
     return;
   }
 
-  const days = Math.floor(difference / 86400000);
-  const hours = Math.floor((difference % 86400000) / 3600000);
-  const minutes = Math.floor((difference % 3600000) / 60000);
-  const seconds = Math.floor((difference % 60000) / 1000);
+  const days = Math.floor(
+    difference / (1000 * 60 * 60 * 24)
+  );
 
-  if (daysElement) daysElement.textContent = String(days).padStart(2, "0");
-  if (hoursElement) hoursElement.textContent = String(hours).padStart(2, "0");
-  if (minutesElement) minutesElement.textContent = String(minutes).padStart(2, "0");
-  if (secondsElement) secondsElement.textContent = String(seconds).padStart(2, "0");
+  const hours = Math.floor(
+    (difference / (1000 * 60 * 60)) % 24
+  );
+
+  const minutes = Math.floor(
+    (difference / (1000 * 60)) % 60
+  );
+
+  const seconds = Math.floor(
+    (difference / 1000) % 60
+  );
+
+  if (daysElement) {
+    daysElement.textContent =
+      String(days).padStart(2, "0");
+  }
+
+  if (hoursElement) {
+    hoursElement.textContent =
+      String(hours).padStart(2, "0");
+  }
+
+  if (minutesElement) {
+    minutesElement.textContent =
+      String(minutes).padStart(2, "0");
+  }
+
+  if (secondsElement) {
+    secondsElement.textContent =
+      String(seconds).padStart(2, "0");
+  }
 }
+
+// ============================================
+// START WEBSITE
+// ============================================
+
+document.addEventListener("DOMContentLoaded", () => {
+  detectCountry();
+  detectTimezone();
+
+  updateCountdown();
+
+  setInterval(updateCountdown, 1000);
+});
