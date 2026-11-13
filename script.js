@@ -1,15 +1,6 @@
 
-"use strict";
-
-// ============================================
-// GTA 6 COUNTDOWN
-// MANUAL COUNTRY + FLAG + TIMEZONE DATABASE
-// ============================================
-
-const LAUNCH_DATE = new Date("2026-11-19T00:00:00");
-
-// Each entry: [timezone, country name, flag]
 const COUNTRIES = [
+  // ASIA
   ["Asia/Kolkata", "India", "🇮🇳"],
   ["Asia/Dubai", "United Arab Emirates", "🇦🇪"],
   ["Asia/Riyadh", "Saudi Arabia", "🇸🇦"],
@@ -31,6 +22,7 @@ const COUNTRIES = [
   ["Asia/Jakarta", "Indonesia", "🇮🇩"],
   ["Asia/Makassar", "Indonesia", "🇮🇩"],
   ["Asia/Jayapura", "Indonesia", "🇮🇩"],
+  ["Asia/Pontianak", "Indonesia", "🇮🇩"],
   ["Asia/Manila", "Philippines", "🇵🇭"],
   ["Asia/Kuala_Lumpur", "Malaysia", "🇲🇾"],
   ["Asia/Taipei", "Taiwan", "🇹🇼"],
@@ -56,6 +48,11 @@ const COUNTRIES = [
   ["Asia/Bahrain", "Bahrain", "🇧🇭"],
   ["Asia/Aden", "Yemen", "🇾🇪"],
   ["Asia/Gaza", "Palestine", "🇵🇸"],
+  ["Asia/Thimphu", "Bhutan", "🇧🇹"],
+  ["Asia/Brunei", "Brunei", "🇧🇳"],
+  ["Asia/Nicosia", "Cyprus", "🇨🇾"],
+  ["Asia/Dili", "Timor-Leste", "🇹🇱"],
+  ["Indian/Maldives", "Maldives", "🇲🇻"],
 
   // EUROPE
   ["Europe/London", "United Kingdom", "🇬🇧"],
@@ -77,6 +74,10 @@ const COUNTRIES = [
   ["Europe/Athens", "Greece", "🇬🇷"],
   ["Europe/Lisbon", "Portugal", "🇵🇹"],
   ["Europe/Moscow", "Russia", "🇷🇺"],
+  ["Asia/Yekaterinburg", "Russia", "🇷🇺"],
+  ["Asia/Novosibirsk", "Russia", "🇷🇺"],
+  ["Asia/Vladivostok", "Russia", "🇷🇺"],
+  ["Asia/Kamchatka", "Russia", "🇷🇺"],
   ["Europe/Kyiv", "Ukraine", "🇺🇦"],
   ["Europe/Bucharest", "Romania", "🇷🇴"],
   ["Europe/Budapest", "Hungary", "🇭🇺"],
@@ -100,7 +101,7 @@ const COUNTRIES = [
   ["Europe/Vatican", "Vatican City", "🇻🇦"],
   ["Europe/Istanbul", "Turkey", "🇹🇷"],
   ["Europe/Chisinau", "Moldova", "🇲🇩"],
-  ["Europe/Skopje", "North Macedonia", "🇲🇰"],
+  ["Europe/Vaduz", "Liechtenstein", "🇱🇮"],
 
   // NORTH AMERICA
   ["America/New_York", "United States", "🇺🇸"],
@@ -111,12 +112,19 @@ const COUNTRIES = [
   ["America/Phoenix", "United States", "🇺🇸"],
   ["America/Anchorage", "United States", "🇺🇸"],
   ["Pacific/Honolulu", "United States", "🇺🇸"],
+  ["America/Indiana/Indianapolis", "United States", "🇺🇸"],
+  ["America/Boise", "United States", "🇺🇸"],
+
   ["America/Toronto", "Canada", "🇨🇦"],
   ["America/Vancouver", "Canada", "🇨🇦"],
   ["America/Edmonton", "Canada", "🇨🇦"],
   ["America/Winnipeg", "Canada", "🇨🇦"],
   ["America/Halifax", "Canada", "🇨🇦"],
   ["America/St_Johns", "Canada", "🇨🇦"],
+  ["America/Regina", "Canada", "🇨🇦"],
+  ["America/Yellowknife", "Canada", "🇨🇦"],
+  ["America/Iqaluit", "Canada", "🇨🇦"],
+
   ["America/Mexico_City", "Mexico", "🇲🇽"],
   ["America/Cancun", "Mexico", "🇲🇽"],
   ["America/Tijuana", "Mexico", "🇲🇽"],
@@ -132,11 +140,22 @@ const COUNTRIES = [
   ["America/Port-au-Prince", "Haiti", "🇭🇹"],
   ["America/Puerto_Rico", "Puerto Rico", "🇵🇷"],
   ["America/El_Salvador", "El Salvador", "🇸🇻"],
+  ["America/Antigua", "Antigua and Barbuda", "🇦🇬"],
+  ["America/Nassau", "Bahamas", "🇧🇸"],
+  ["America/Barbados", "Barbados", "🇧🇧"],
+  ["America/Dominica", "Dominica", "🇩🇲"],
+  ["America/Grenada", "Grenada", "🇬🇩"],
+  ["America/St_Kitts", "Saint Kitts and Nevis", "🇰🇳"],
+  ["America/St_Lucia", "Saint Lucia", "🇱🇨"],
+  ["America/St_Vincent", "Saint Vincent and the Grenadines", "🇻🇨"],
+  ["America/Port_of_Spain", "Trinidad and Tobago", "🇹🇹"],
 
   // SOUTH AMERICA
   ["America/Sao_Paulo", "Brazil", "🇧🇷"],
   ["America/Manaus", "Brazil", "🇧🇷"],
   ["America/Rio_Branco", "Brazil", "🇧🇷"],
+  ["America/Belem", "Brazil", "🇧🇷"],
+  ["America/Fortaleza", "Brazil", "🇧🇷"],
   ["America/Argentina/Buenos_Aires", "Argentina", "🇦🇷"],
   ["America/Argentina/Cordoba", "Argentina", "🇦🇷"],
   ["America/Santiago", "Chile", "🇨🇱"],
@@ -160,6 +179,7 @@ const COUNTRIES = [
   ["Africa/Tunis", "Tunisia", "🇹🇳"],
   ["Africa/Tripoli", "Libya", "🇱🇾"],
   ["Africa/Khartoum", "Sudan", "🇸🇩"],
+  ["Africa/Juba", "South Sudan", "🇸🇸"],
   ["Africa/Addis_Ababa", "Ethiopia", "🇪🇹"],
   ["Africa/Dar_es_Salaam", "Tanzania", "🇹🇿"],
   ["Africa/Kampala", "Uganda", "🇺🇬"],
@@ -201,6 +221,10 @@ const COUNTRIES = [
   ["Africa/Guinea-Bissau", "Guinea-Bissau", "🇬🇼"],
   ["Africa/Nouakchott", "Mauritania", "🇲🇷"],
   ["Africa/El_Aaiun", "Western Sahara", "🇪🇭"],
+  ["Atlantic/Cape_Verde", "Cabo Verde", "🇨🇻"],
+  ["Indian/Comoro", "Comoros", "🇰🇲"],
+  ["Indian/Mauritius", "Mauritius", "🇲🇺"],
+  ["Indian/Mahe", "Seychelles", "🇸🇨"],
 
   // OCEANIA
   ["Australia/Sydney", "Australia", "🇦🇺"],
@@ -210,7 +234,10 @@ const COUNTRIES = [
   ["Australia/Adelaide", "Australia", "🇦🇺"],
   ["Australia/Darwin", "Australia", "🇦🇺"],
   ["Australia/Hobart", "Australia", "🇦🇺"],
+  ["Australia/Lord_Howe", "Australia", "🇦🇺"],
+
   ["Pacific/Auckland", "New Zealand", "🇳🇿"],
+  ["Pacific/Chatham", "New Zealand", "🇳🇿"],
   ["Pacific/Fiji", "Fiji", "🇫🇯"],
   ["Pacific/Port_Moresby", "Papua New Guinea", "🇵🇬"],
   ["Pacific/Guadalcanal", "Solomon Islands", "🇸🇧"],
@@ -218,6 +245,7 @@ const COUNTRIES = [
   ["Pacific/Apia", "Samoa", "🇼🇸"],
   ["Pacific/Tongatapu", "Tonga", "🇹🇴"],
   ["Pacific/Tarawa", "Kiribati", "🇰🇮"],
+  ["Pacific/Kiritimati", "Kiribati", "🇰🇮"],
   ["Pacific/Majuro", "Marshall Islands", "🇲🇭"],
   ["Pacific/Palau", "Palau", "🇵🇼"],
   ["Pacific/Chuuk", "Micronesia", "🇫🇲"],
@@ -226,40 +254,15 @@ const COUNTRIES = [
   ["Pacific/Efate", "Vanuatu", "🇻🇺"],
   ["Pacific/Pago_Pago", "American Samoa", "🇦🇸"],
   ["Pacific/Rarotonga", "Cook Islands", "🇨🇰"],
-  ["Pacific/Niue", "Niue", "🇳🇺"]
+  ["Pacific/Niue", "Niue", "🇳🇺"],
+
+  // ADDITIONAL US TERRITORY
+  ["America/Guam", "Guam", "🇬🇺"],
+  ["America/Saipan", "Northern Mariana Islands", "🇲🇵"],
+  ["America/Adak", "United States", "🇺🇸"],
+  ["America/Metlakatla", "United States", "🇺🇸"]
 ];
-
-// ============================================
-// DETECT COUNTRY FROM PHONE TIMEZONE
-// ============================================
-
-function detectCountry() {
-  const timezone =
-    Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  const countryElement =
-    document.getElementById("country");
-
-  const timezoneElement =
-    document.getElementById("timezone");
-
-  if (timezoneElement) {
-    timezoneElement.textContent = timezone;
-  }
-
-  if (!countryElement) return;
-
-  // Find matching manually entered country
-  const match = COUNTRIES.find(
-    country => country[0] === timezone
-  );
-
-  if (match) {
-    countryElement.textContent =
-      `${match[2]} ${match[1]}`;
-  } else {
-    countryElement.textContent =
-      "🌍 Other Region";
+";
   }
 
   console.log("Selected timezone:", timezone);
