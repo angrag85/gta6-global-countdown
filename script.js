@@ -1,126 +1,114 @@
 
-// ========================================
-// GTA 6 GLOBAL COUNTDOWN
-// ========================================
+document.addEventListener("DOMContentLoaded", () => {
+  detectCountry();
+  detectTimezone();
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+});
 
-// GTA 6 countdown target: November 19, 2026
-const LAUNCH_DATE = new Date("2026-11-19T00:00:00");
-
-// ========================================
-// COUNTRY DETECTION
-// ========================================
+// ==================================
+// COUNTRY NAME + FLAG
+// ==================================
 
 async function detectCountry() {
-  const countryElementIds = [
-    "country",
-    "user-country",
-    "country-name"
-  ];
+  const countryElement = document.getElementById("country");
 
-  function showCountry(name, flag) {
-    const countryText = `${flag} ${name}`;
-
-    countryElementIds.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.textContent = countryText;
-      }
-    });
+  if (!countryElement) {
+    console.error('Missing HTML element: id="country"');
+    return;
   }
 
-  function showFallback() {
-    showCountry("Country unavailable", "🌍");
-  }
+  countryElement.textContent = "🌍 Detecting country...";
 
   try {
-    // Detect country using visitor's IP address
-    const response = await fetch("https://ipwho.is/");
-    if (!response.ok) throw new Error("Country lookup failed");
+    let countryName = "";
+    let countryCode = "";
 
-    const data = await response.json();
+    // First country detection service
+    try {
+      const response = await fetch("https://ipwho.is/", {
+        cache: "no-store"
+      });
 
-    if (!data.success || !data.country_code) {
-      throw new Error("Country not detected");
+      if (!response.ok) throw new Error("First service failed");
+
+      const data = await response.json();
+
+      if (data.success && data.country_code && data.country) {
+        countryName = data.country;
+        countryCode = data.country_code;
+      } else {
+        throw new Error("No country returned");
+      }
+    } catch (error) {
+      console.warn("Trying backup country service...");
     }
 
-    const countryCode = data.country_code.toUpperCase();
+    // Backup country detection service
+    if (!countryCode) {
+      const response = await fetch("https://ipapi.co/json/", {
+        cache: "no-store"
+      });
+
+      if (!response.ok) throw new Error("Backup service failed");
+
+      const data = await response.json();
+
+      countryName = data.country_name;
+      countryCode = data.country_code;
+    }
+
+    if (!countryName || !countryCode) {
+      throw new Error("Country information unavailable");
+    }
+
+    countryCode = countryCode.toUpperCase();
 
     // Exclude Pakistan
     if (countryCode === "PK") {
-      showCountry("Other Region", "🌍");
+      countryElement.textContent = "🌍 Other Region";
       return;
     }
 
-    // Convert country code into a flag emoji
+    // Create country flag emoji
     const flag = countryCode
       .split("")
-      .map(char =>
-        String.fromCodePoint(127397 + char.charCodeAt(0))
+      .map(letter =>
+        String.fromCodePoint(127397 + letter.charCodeAt(0))
       )
       .join("");
 
-    showCountry(data.country, flag);
+    // Display flag and country name together
+    countryElement.textContent = `${flag} ${countryName}`;
+
+    console.log("Country detected:", countryName, countryCode);
 
   } catch (error) {
-    console.error("Country detection error:", error);
-
-    // Fallback to browser locale if IP lookup fails
-    try {
-      const locale = new Intl.Locale(
-        navigator.language || "en-US"
-      ).maximize();
-
-      const code = locale.region;
-
-      if (code && code !== "PK") {
-        const displayName = new Intl.DisplayNames(
-          [navigator.language || "en"],
-          { type: "region" }
-        ).of(code);
-
-        const flag = code
-          .split("")
-          .map(char =>
-            String.fromCodePoint(127397 + char.charCodeAt(0))
-          )
-          .join("");
-
-        showCountry(displayName, flag);
-      } else {
-        showFallback();
-      }
-    } catch {
-      showFallback();
-    }
+    console.error("Country detection failed:", error);
+    countryElement.textContent = "🌍 Country unavailable";
   }
 }
 
-// ========================================
-// TIMEZONE DETECTION
-// ========================================
+// ==================================
+// TIMEZONE
+// ==================================
 
 function detectTimezone() {
+  const timezoneElement = document.getElementById("timezone");
+
+  if (!timezoneElement) return;
+
   const timezone =
     Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const timezoneElementIds = [
-    "timezone",
-    "user-timezone"
-  ];
-
-  timezoneElementIds.forEach(id => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.textContent = timezone || "Unknown timezone";
-    }
-  });
-
-  return timezone;
+  timezoneElement.textContent = timezone || "Unknown";
 }
 
-// ========================================
-// COUNTDOWN
-// ========================================
+// ==================================
+// GTA 6 COUNTDOWN
+// ==================================
+
+const LAUNCH_DATE = new Date("2026-11-19T00:00:00");
 
 function updateCountdown() {
   const now = new Date();
@@ -139,42 +127,13 @@ function updateCountdown() {
     return;
   }
 
-  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(
-    (difference / (1000 * 60 * 60)) % 24
-  );
-  const minutes = Math.floor(
-    (difference / (1000 * 60)) % 60
-  );
-  const seconds = Math.floor(
-    (difference / 1000) % 60
-  );
+  const days = Math.floor(difference / 86400000);
+  const hours = Math.floor((difference % 86400000) / 3600000);
+  const minutes = Math.floor((difference % 3600000) / 60000);
+  const seconds = Math.floor((difference % 60000) / 1000);
 
-  if (daysElement) {
-    daysElement.textContent = String(days).padStart(2, "0");
-  }
-
-  if (hoursElement) {
-    hoursElement.textContent = String(hours).padStart(2, "0");
-  }
-
-  if (minutesElement) {
-    minutesElement.textContent = String(minutes).padStart(2, "0");
-  }
-
-  if (secondsElement) {
-    secondsElement.textContent = String(seconds).padStart(2, "0");
-  }
+  if (daysElement) daysElement.textContent = String(days).padStart(2, "0");
+  if (hoursElement) hoursElement.textContent = String(hours).padStart(2, "0");
+  if (minutesElement) minutesElement.textContent = String(minutes).padStart(2, "0");
+  if (secondsElement) secondsElement.textContent = String(seconds).padStart(2, "0");
 }
-
-// ========================================
-// START WEBSITE
-// ========================================
-
-document.addEventListener("DOMContentLoaded", () => {
-  detectCountry();
-  detectTimezone();
-
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-});
