@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090713">
+  <meta name="description" content="A global Grand Theft Auto VI launch countdown. Your local countdown is personalized to your device timezone.">
+  <title>GTA VI — Global Launch Countdown</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="GTA VI countdown home"><span class="brand-mark">VI</span><span>GLOBAL<br><b>COUNTDOWN</b></span></a>
+    <div class="live-pill"><span class="pulse"></span> LAUNCH WATCH</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">THE WORLD IS WAITING</div>
+      <h1>GRAND THEFT<br><span>AUTO <i>VI</i></span></h1>
+      <p class="subhead">ONE WORLD. ONE LAUNCH. YOUR LOCAL COUNTDOWN.</p>
+
+      <div class="location-card">
+        <div class="location-label">YOUR COUNTDOWN · AUTO-DETECTED</div>
+        <div class="location-line"><span id="flag" class="flag">🌍</span><span id="country">Detecting your region…</span></div>
+        <div id="local-date" class="local-date">November 19, 2026 · Local time</div>
+      </div>
+
+      <div class="timer" id="timer" aria-live="polite">
+        <div class="time-unit"><strong id="days">---</strong><span>DAYS</span></div>
+        <div class="colon">:</div>
+        <div class="time-unit"><strong id="hours">--</strong><span>HOURS</span></div>
+        <div class="colon">:</div>
+        <div class="time-unit"><strong id="minutes">--</strong><span>MINUTES</span></div>
+        <div class="colon">:</div>
+        <div class="time-unit"><strong id="seconds">--</strong><span>SECONDS</span></div>
+      </div>
+      <p id="status" class="status">Counting down to the scheduled launch window.</p>
+      <p class="fineprint">Countdown uses your device's time zone. Confirm exact local availability with your platform/store.</p>
+    </section>
+
+    <section class="stream-section">
+      <div class="section-heading"><span class="section-kicker">LIVE FROM OUR CHANNEL</span><h2>THE COUNTDOWN STREAM</h2></div>
+      <div class="video-frame">
+        <div id="video-placeholder" class="video-placeholder">
+          <div class="play-icon">▶</div>
+          <h3>YOUR YOUTUBE LIVESTREAM</h3>
+          <p>Add your YouTube video or live-stream ID in <code>config.js</code>.</p>
+        </div>
+        <iframe id="youtube-player" title="YouTube livestream" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen hidden></iframe>
+      </div>
+      <p class="stream-note">The YouTube video is the same for every viewer. The countdown above this player personalizes in each visitor's browser.</p>
+    </section>
+
+    <section class="details">
+      <div><span class="detail-label">RELEASE DATE</span><strong>19 NOVEMBER 2026</strong></div>
+      <div><span class="detail-label">YOUR TIME ZONE</span><strong id="timezone">Detecting…</strong></div>
+      <div><span class="detail-label">COUNTDOWN MODE</span><strong>LOCAL DEVICE TIME</strong></div>
+    </section>
+  </main>
+  <footer><span>FAN-MADE COUNTDOWN · NOT AFFILIATED WITH ROCKSTAR GAMES</span><span>GTA VI is a trademark of its respective owner.</span></footer>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
