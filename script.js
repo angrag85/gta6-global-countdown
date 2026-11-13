@@ -1,111 +1,163 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-  // =====================================
-  // GTA 6 GLOBAL COUNTDOWN
-  // =====================================
-
-  // Launch date: November 19, 2026
-  // Countdown is displayed using each visitor's local time.
-  const LAUNCH_DATE = new Date("2026-11-19T00:00:00");
 
   // =====================================
-  // GET VISITOR'S TIME ZONE
+  // GTA 6 COUNTDOWN SETTINGS
+  // =====================================
+
+  const LAUNCH_YEAR = 2026;
+  const LAUNCH_MONTH = 10;
+  const LAUNCH_DAY = 19;
+
+  // =====================================
+  // AUTOMATIC TIME ZONE DETECTION
   // =====================================
 
   const timezone =
     Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown";
 
   // =====================================
-  // DETECT COUNTRY FROM TIME ZONE
+  // COUNTRY DETECTION
   // =====================================
 
   function getCountryFromTimezone(zone) {
+
+    // INDIA
     if (
       zone === "Asia/Kolkata" ||
       zone === "Asia/Calcutta"
-    ) {
-      return "India";
-    }
+    ) return "India";
 
-    if (zone.startsWith("Europe/London")) {
-      return "United Kingdom";
-    }
+    // UNITED KINGDOM
+    if (zone === "Europe/London") return "United Kingdom";
 
-    if (zone.startsWith("America/")) {
-      return "United States";
-    }
+    // GERMANY
+    if (zone === "Europe/Berlin" ||
+        zone === "Europe/Busingen") return "Germany";
 
-    if (zone.startsWith("Asia/Dubai")) {
-      return "United Arab Emirates";
-    }
+    // RUSSIA
+    if (
+      zone.startsWith("Europe/Moscow") ||
+      zone.startsWith("Europe/Kaliningrad") ||
+      zone.startsWith("Europe/Samara") ||
+      zone.startsWith("Asia/Yekaterinburg") ||
+      zone.startsWith("Asia/Omsk") ||
+      zone.startsWith("Asia/Novosibirsk") ||
+      zone.startsWith("Asia/Krasnoyarsk") ||
+      zone.startsWith("Asia/Irkutsk") ||
+      zone.startsWith("Asia/Chita") ||
+      zone.startsWith("Asia/Vladivostok") ||
+      zone.startsWith("Asia/Magadan") ||
+      zone.startsWith("Asia/Kamchatka") ||
+      zone.startsWith("Asia/Sakhalin") ||
+      zone.startsWith("Asia/Anadyr")
+    ) return "Russia";
 
-    if (zone.startsWith("Asia/Tokyo")) {
-      return "Japan";
-    }
+    // CHINA
+    if (
+      zone === "Asia/Shanghai" ||
+      zone === "Asia/Chongqing" ||
+      zone === "Asia/Harbin" ||
+      zone === "Asia/Urumqi"
+    ) return "China";
 
-    if (zone.startsWith("Asia/Shanghai")) {
-      return "China";
-    }
+    // USA
+    if (
+      zone.startsWith("America/") &&
+      !zone.startsWith("America/Toronto") &&
+      !zone.startsWith("America/Vancouver") &&
+      !zone.startsWith("America/Edmonton") &&
+      !zone.startsWith("America/Winnipeg") &&
+      !zone.startsWith("America/Halifax") &&
+      !zone.startsWith("America/St_Johns") &&
+      !zone.startsWith("America/Montreal")
+    ) return "United States";
 
-    if (zone.startsWith("Asia/Singapore")) {
-      return "Singapore";
-    }
+    // PAKISTAN EXCLUDED
+    if (zone === "Asia/Karachi") return "Other Region";
 
-    if (zone.startsWith("Australia/")) {
-      return "Australia";
-    }
+    // OTHER COUNTRIES
+    const countryMap = {
+      "Asia/Tokyo": "Japan",
+      "Asia/Seoul": "South Korea",
+      "Asia/Dubai": "United Arab Emirates",
+      "Asia/Riyadh": "Saudi Arabia",
+      "Asia/Dhaka": "Bangladesh",
+      "Asia/Kathmandu": "Nepal",
+      "Asia/Singapore": "Singapore",
+      "Asia/Bangkok": "Thailand",
+      "Asia/Jakarta": "Indonesia",
+      "Asia/Kuala_Lumpur": "Malaysia",
+      "Asia/Manila": "Philippines",
 
-    if (zone.startsWith("Europe/Paris")) {
-      return "France";
-    }
+      "Europe/Paris": "France",
+      "Europe/Rome": "Italy",
+      "Europe/Madrid": "Spain",
+      "Europe/Amsterdam": "Netherlands",
+      "Europe/Zurich": "Switzerland",
+      "Europe/Vienna": "Austria",
+      "Europe/Brussels": "Belgium",
+      "Europe/Stockholm": "Sweden",
+      "Europe/Oslo": "Norway",
+      "Europe/Copenhagen": "Denmark",
+      "Europe/Helsinki": "Finland",
+      "Europe/Warsaw": "Poland",
+      "Europe/Athens": "Greece",
+      "Europe/Istanbul": "Turkey",
 
-    if (zone.startsWith("Europe/Berlin")) {
-      return "Germany";
-    }
+      "Africa/Cairo": "Egypt",
+      "Africa/Johannesburg": "South Africa",
+      "Africa/Lagos": "Nigeria",
+      "Africa/Nairobi": "Kenya",
 
-    if (zone.startsWith("Europe/")) {
-      return "Europe";
-    }
+      "Australia/Sydney": "Australia",
+      "Australia/Melbourne": "Australia",
+      "Australia/Perth": "Australia",
+      "Pacific/Auckland": "New Zealand",
 
-    if (zone.startsWith("Africa/")) {
-      return "Africa";
-    }
+      "America/Sao_Paulo": "Brazil",
+      "America/Argentina/Buenos_Aires": "Argentina",
+      "America/Mexico_City": "Mexico",
+      "America/Toronto": "Canada",
+      "America/Vancouver": "Canada",
+      "America/Edmonton": "Canada",
+      "America/Winnipeg": "Canada",
+      "America/Halifax": "Canada",
+      "America/St_Johns": "Canada"
+    };
 
-    if (zone.startsWith("America/")) {
-      return "Americas";
-    }
+    if (countryMap[zone]) return countryMap[zone];
 
-    return "Your Region";
+    // FALLBACK FOR OTHER RECOGNISED TIME ZONES
+    if (zone.startsWith("Europe/")) return "Other European Region";
+    if (zone.startsWith("Asia/")) return "Other Asian Region";
+    if (zone.startsWith("America/")) return "Other American Region";
+    if (zone.startsWith("Africa/")) return "Other African Region";
+    if (zone.startsWith("Australia/")) return "Australia";
+    if (zone.startsWith("Pacific/")) return "Pacific Region";
+    if (zone.startsWith("Indian/")) return "Indian Ocean Region";
+
+    return "Other Region";
   }
 
   const country = getCountryFromTimezone(timezone);
 
   // =====================================
-  // DISPLAY COUNTRY AND TIME ZONE
+  // SHOW COUNTRY AND TIME ZONE
   // =====================================
 
-  const countryElements = [
-    document.getElementById("country"),
-    document.getElementById("user-country"),
-    document.getElementById("country-name")
-  ].filter(Boolean);
-
-  const timezoneElements = [
-    document.getElementById("timezone"),
-    document.getElementById("user-timezone"),
-    document.getElementById("timezone-name")
-  ].filter(Boolean);
-
-  countryElements.forEach(element => {
-    element.textContent = country;
+  ["country", "user-country", "country-name"].forEach(id => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = country;
   });
 
-  timezoneElements.forEach(element => {
-    element.textContent = timezone;
+  ["timezone", "user-timezone", "timezone-name"].forEach(id => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = timezone;
   });
 
   // =====================================
-  // COUNTDOWN ELEMENTS
+  // COUNTDOWN TIMER
   // =====================================
 
   const daysElement = document.getElementById("days");
@@ -114,20 +166,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const secondsElement = document.getElementById("seconds");
 
   function updateCountdown() {
+
     const now = new Date();
 
-    // Interpret the launch date as local midnight.
     const target = new Date(
-      now.getFullYear(),
-      10,
-      19,
-      0,
-      0,
-      0
+      LAUNCH_YEAR,
+      LAUNCH_MONTH,
+      LAUNCH_DAY,
+      0, 0, 0
     );
-
-    // Use the configured launch year.
-    target.setFullYear(2026);
 
     const difference = target.getTime() - now.getTime();
 
@@ -139,37 +186,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const days = Math.floor(
-      difference / (1000 * 60 * 60 * 24)
-    );
+    const days = Math.floor(difference / 86400000);
+    const hours = Math.floor((difference / 3600000) % 24);
+    const minutes = Math.floor((difference / 60000) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
 
-    const hours = Math.floor(
-      (difference / (1000 * 60 * 60)) % 24
-    );
-
-    const minutes = Math.floor(
-      (difference / (1000 * 60)) % 60
-    );
-
-    const seconds = Math.floor(
-      (difference / 1000) % 60
-    );
-
-    if (daysElement) {
-      daysElement.textContent = String(days).padStart(2, "0");
-    }
-
-    if (hoursElement) {
-      hoursElement.textContent = String(hours).padStart(2, "0");
-    }
-
-    if (minutesElement) {
-      minutesElement.textContent = String(minutes).padStart(2, "0");
-    }
-
-    if (secondsElement) {
-      secondsElement.textContent = String(seconds).padStart(2, "0");
-    }
+    if (daysElement) daysElement.textContent = String(days).padStart(2, "0");
+    if (hoursElement) hoursElement.textContent = String(hours).padStart(2, "0");
+    if (minutesElement) minutesElement.textContent = String(minutes).padStart(2, "0");
+    if (secondsElement) secondsElement.textContent = String(seconds).padStart(2, "0");
   }
 
   updateCountdown();
@@ -186,6 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   console.log("GTA 6 Countdown loaded");
-  console.log("Detected time zone:", timezone);
-  console.log("Detected country:", country);
+  console.log("Visitor timezone:", timezone);
+  console.log("Visitor country:", country);
+
 });
